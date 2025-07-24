@@ -74,7 +74,7 @@ body {
   cursor: pointer;
   box-shadow: 0 5px 15px rgba(0, 132, 180, 0.4);
   transition: all 0.3s ease;
-  margin-top: 3rem;
+  margin-top: 2rem;
 }
 
 #start:hover {
@@ -83,27 +83,30 @@ body {
   box-shadow: 0 8px 20px rgba(0, 132, 180, 0.6);
 }
 
-/* paramtery pro vyskakující okno po kliknutí na Kouzelné tlačítko */
+/* parametry pro vyskakující okno po kliknutí na Kouzelné tlačítko */
 #vysvetleni {
+  max-height: 85vh;
   display: none;
   position: relative;
   background-color: #fff;
   color: #333;
   border: 3px solid #0083b0;
   border-radius: 10px;
-  padding: 2rem;
-  margin: 2rem auto 0 auto;
+  padding: 1.5rem; /* menší padding */
+  margin: 1.5rem auto 0 auto;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   width: 90%;
+  overflow: hidden; 
 }
+
 
 #vysvetleni h1 {
   text-align: center;
   margin-bottom: 2rem;
 }
 
-/* parametry křížku ve vyskakujícím okně */ 
+/* křížek */
 #endButton {
   position: absolute;
   top: 10px;
@@ -124,31 +127,39 @@ body {
   background-color: rgba(255, 0, 0, 0.05);
 }
 
-/* GRID KONTEJNER ve vyskakujícím okně */
-.flexGame {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+/* FLEX KONTEJNER pro dvě řady */
+.flexGame,
+.flexGame2 {
+  display: flex;
+  justify-content: center;
   gap: 2rem;
+  flex-wrap: wrap;
   padding-top: 1rem;
+}
+
+/* oddělení mezi řadami */
+.flexGame2 {
   margin-top: 1.5rem;
   border-top: 2px solid #ddd;
+  padding-top: 1.5rem;
 }
 
 /* BOXY */
 .pozitivni, .negativni, .ovladani, .life {
-  min-width: 250px;
-  padding: 1.5rem;
+  min-width: 200px;
+  flex: 1 1 250px;
+  padding: 1rem; /* zmenšeno */
   border-radius: 10px;
   text-align: center;
 }
 
-/* část vlevo nahoře */ 
+
+/* pozitivni */
 .pozitivni {
   background: #e6ffed;
   border: 2px solid #77c679;
 }
 
-/* uprava seznamu */
 .pozitivni ul {
   list-style: none;
   display: flex;
@@ -158,7 +169,7 @@ body {
 }
 
 .pozitivni li img {
-  width: 80px;
+  width: 60px;
   height: auto;
   transition: transform 0.2s ease;
 }
@@ -167,14 +178,14 @@ body {
   transform: scale(1.1);
 }
 
-/* část vpravo nahoře */
+/* negativni */
 .negativni {
   background-color: #ffeaea;
   border: 2px solid #e78b8b;
 }
 
 .negativni img {
-  width: 80px;
+  width: 60px;
   height: auto;
   transition: transform 0.2s ease;
 }
@@ -183,7 +194,7 @@ body {
   transform: rotate(10deg) scale(1.05);
 }
 
-/* část vlevo dole */
+/* ovladani */
 .ovladani {
   background: #e6f7ff;
   border: 2px solid #00aaff;
@@ -191,7 +202,7 @@ body {
 
 .ovladani h2 {
   margin-bottom: 1rem;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #0077aa;
 }
 
@@ -211,7 +222,7 @@ body {
   background-color: #d4f1ff;
 }
 
-/* část vpravo dole */
+/* life */
 .life {
   background: #fff5f5;
   border: 2px solid #e58a8a;
@@ -219,16 +230,127 @@ body {
 
 .life h2 {
   margin-bottom: 1rem;
-  font-size: 1.4rem;
+  font-size: 1.2rem;
   color: #c0392b;
 }
 
 .life img {
-  width: 100px;
+  width: 80px;
   height: auto;
   transition: transform 0.2s ease;
 }
 
 .life img:hover {
   transform: scale(1.1);
+}
+
+/* Následju celá část týkající se hry */
+
+/* Sekce hry */
+#game {
+  
+  display: none;
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(to bottom, #c2e9fb, #a1c4fd);
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  overflow: hidden;
+}
+
+
+
+
+/* Herní okno */
+.gameWindow {
+  position: relative;
+  background-color: #ffffff;
+  border: 6px solid #0077aa;
+  border-radius: 20px;
+  width: 90%;
+  height: 90%;
+  max-width: 80%;
+  max-height: 70%;
+  padding: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+
+
+#finalButton {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #00b4db, #0083b0);
+  border: 2px solid #007ca6;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(0, 132, 180, 0.4);
+  transition: all 0.3s ease;
+}
+
+#finalButton:hover {
+  background: linear-gradient(135deg, #56ccf2, #2f80ed);
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 132, 180, 0.6);
+}
+
+.gameLife {
+  position: absolute;
+  bottom: 2rem;         
+  left: 1rem;          
+  display: flex;
+  gap: 0.5rem;
+}
+
+.gameLife img {
+  width: 40px;          
+  height: auto;
+}
+
+.gameScore {
+  position: absolute;
+  top: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.gameScore h1 {
+  color: #000;         
+  font-size: 1.8rem;
+}
+
+.floor {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2rem;
+  background-color: #8B4513;       
+  border-top: 10px solid #3cb043;   
+}
+
+.gamePlayer {
+  display: block;
+  position: absolute;
+  bottom: 4.2rem; 
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(255, 0, 0, 0.3); /* nezapomenout smazat */
+  height: 30px;
+  
+}
+
+#player {
+  width: 80px;
+ 
+}
+
+@media (max-width: 768px), (max-height: 700px) {
+  #vysvetleni {
+    overflow-y: auto;
+  }
 }
