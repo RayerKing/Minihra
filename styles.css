@@ -97,9 +97,8 @@ body {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
   max-width: 1000px;
   width: 90%;
-  overflow: hidden; 
+  overflow: hidden;
 }
-
 
 #vysvetleni h1 {
   text-align: center;
@@ -145,14 +144,16 @@ body {
 }
 
 /* BOXY */
-.pozitivni, .negativni, .ovladani, .life {
+.pozitivni,
+.negativni,
+.ovladani,
+.life {
   min-width: 200px;
   flex: 1 1 250px;
   padding: 1rem; /* zmenšeno */
   border-radius: 10px;
   text-align: center;
 }
-
 
 /* pozitivni */
 .pozitivni {
@@ -248,7 +249,6 @@ body {
 
 /* Sekce hry */
 #game {
-  
   display: none;
   width: 100vw;
   height: 100vh;
@@ -259,9 +259,6 @@ body {
   align-items: center;
   overflow: hidden;
 }
-
-
-
 
 /* Herní okno */
 .gameWindow {
@@ -277,7 +274,6 @@ body {
   overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
 }
-
 
 #finalButton {
   padding: 1rem 2rem;
@@ -300,14 +296,14 @@ body {
 
 .gameLife {
   position: absolute;
-  bottom: 2rem;         
-  left: 1rem;          
+  bottom: 2rem;
+  left: 1rem;
   display: flex;
   gap: 0.5rem;
 }
 
 .gameLife img {
-  width: 40px;          
+  width: 40px;
   height: auto;
 }
 
@@ -319,7 +315,7 @@ body {
 }
 
 .gameScore h1 {
-  color: #000;         
+  color: #000;
   font-size: 1.8rem;
 }
 
@@ -329,24 +325,36 @@ body {
   left: 0;
   width: 100%;
   height: 2rem;
-  background-color: #8B4513;       
-  border-top: 10px solid #3cb043;   
+  background-color: #8b4513;
+  border-top: 10px solid #3cb043;
 }
 
 .gamePlayer {
   display: block;
   position: absolute;
-  bottom: 4.2rem; 
-  left: 50%;
-  transform: translateX(-50%);
+  bottom: 4.2rem;
+  left: 300px;
+
   background-color: rgba(255, 0, 0, 0.3); /* nezapomenout smazat */
   height: 30px;
-  
 }
 
 #player {
   width: 80px;
- 
+}
+
+.dropItem {
+  position: absolute;
+  top: 0;
+  width: 50px;
+  height: auto;
+  pointer-events: none; 
+  z-index: 10;
+  transition: top 0.1s linear;
+}
+
+.gameHtml, .gameCss, .gameJs, .gameBug {
+  display:none;
 }
 
 @media (max-width: 768px), (max-height: 700px) {
