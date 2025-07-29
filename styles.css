@@ -150,7 +150,7 @@ body {
 .life {
   min-width: 200px;
   flex: 1 1 250px;
-  padding: 1rem; /* zmenšeno */
+  padding: 1rem; 
   border-radius: 10px;
   text-align: center;
 }
@@ -356,6 +356,59 @@ body {
 .gameHtml, .gameCss, .gameJs, .gameBug {
   display:none;
 }
+
+/* KonecHry div */
+.defeatGame {
+  display: none; 
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #ffffffee;
+  border: 3px solid #007ca6;
+  border-radius: 20px;
+  padding: 2rem 3rem;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  z-index: 999;
+}
+
+.defeatGame h1 {
+  color: #c0392b;
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Restart button */
+#restart {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  font-weight: bold;
+  background: linear-gradient(135deg, #ff5f6d, #ffc371);
+  border: 2px solid #e67e22;
+  border-radius: 10px;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+  transition: all 0.3s ease;
+}
+
+#restart:hover {
+  background: linear-gradient(135deg, #ff9966, #ff5e62);
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(230, 126, 34, 0.6);
+}
+
+#scoreOdstavec {
+  color: black;
+  margin-bottom: 1rem; /* Odsazení mezi odstavcem a tlačítkem */
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+
+
+
 
 @media (max-width: 768px), (max-height: 700px) {
   #vysvetleni {

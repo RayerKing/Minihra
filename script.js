@@ -12,6 +12,8 @@ const navbar = document.getElementById("navbar");
 const game = document.getElementById("game");
 // tlačítko pro konec hry
 const finalButton = document.getElementById("finalButton");
+// button po prohře
+const restart = document.getElementById("restart");
 // welcome section
 const welcome = document.getElementById("welcome-section");
 // načtení hráče
@@ -20,10 +22,20 @@ let player = document.querySelector(".gamePlayer");
 let playerMovement = parseInt(
   window.getComputedStyle(player).getPropertyValue("left")
 );
-// pro zjištění kolize = porovnání souřadnic
-let collision = parseInt(
-  window.getComputedStyle(player).getPropertyValue("bottom")
-);
+// div pro konecHry
+const defeatDiv = document.querySelector(".defeatGame");
+// score
+let score = 0;
+let scoreSpan = document.getElementById("score");
+// život
+let life = 3;
+const srdce1 = document.getElementById("srdce1");
+const srdce2 = document.getElementById("srdce2");
+const srdce3 = document.getElementById("srdce3");
+//drop věcí v poli
+const pole = ["dropHtml", "dropCss", "dropJs", "dropBug"];
+
+
 // načtení chytaných věcí
 const dropHtml = document.getElementById("dropHtml");
 const dropJs = document.getElementById("dropJs");
@@ -62,14 +74,22 @@ function konec() {
 }
 
 // funkce pro startHry
-function startHry(e) {
+function startHry() {
+  srdce1.style.display = "flex";
+  srdce2.style.display = "flex";
+  srdce3.style.display = "flex";
+  life = 3;
+  defeatDiv.style.display="none";
+  score = 0;
+  scoreSpan.innerText = score;
   // TODO vymyslet získání středu... a upravit okraje
   player.style.left = "300px";
   playerMovement = parseInt(
     window.getComputedStyle(player).getPropertyValue("left")
   );
-
-  interval = setInterval(spawn, 5000);
+  // pro testování
+  //spawn();
+  interval = setInterval(spawn, 2000);
 
   magicButton.style.display = "none";
   finalButton.style.display = "block";
@@ -86,6 +106,7 @@ function startHry(e) {
 
 //Funkce pro pohyb hráče
 function movement(e) {
+  console.log(playerMovement);
   if (e.key == "ArrowLeft") {
     console.log("doleva");
     playerLeft();
@@ -110,30 +131,94 @@ function playerRight() {
 
 // funkce pro spawn
 function spawn() {
-  const pole = ["dropHtml", "dropCss", "dropJs"];
+  
+  // pro určení dropu
   const randomPole = pole[Math.floor(Math.random() * pole.length)];
   const vzor = document.getElementById(randomPole);
   console.log(vzor);
-
+  // vytvoření clonu
   const clone = vzor.cloneNode(true);
   clone.removeAttribute("id");
+  clone.setAttribute("data-type", randomPole);
+  console.log("Typ klonu:", clone.getAttribute("data-type"));
   clone.classList.add("dropItem");
   console.log("clone je " + randomPole);
 
   document.querySelector(".gameWindow").appendChild(clone);
-
+  // určení random pozice na ose x
   clone.style.position = "absolute";
   clone.style.left = Math.floor(Math.random() * 500) + "px";
   clone.style.top = "0px";
 
+  
+
   let top = 0;
   // funkce pro pohyb dolu
-  function pohybdolu (){
+  function pohybdolu() {
     top += 5;
     clone.style.top = top + "px";
+    const type = clone.getAttribute("data-type");
+    const hitBoxPlayer = player.getBoundingClientRect();
+    const hitBoxClone = clone.getBoundingClientRect();
+    const windowBox = document
+      .querySelector(".gameWindow")
+      .getBoundingClientRect();
+    const kolize = !(
+  hitBoxClone.bottom < hitBoxPlayer.top ||
+  hitBoxClone.top > hitBoxPlayer.bottom ||
+  hitBoxClone.right < hitBoxPlayer.left ||
+  hitBoxClone.left > hitBoxPlayer.right
+);
+    console.log(hitBoxClone.top + "clone");
+    console.log(windowBox.bottom + "window");
+    //podmínka pro odstranění clonu, když vypadne z obrazovky
+    if (hitBoxClone.top > windowBox.bottom) {
+      console.log("Mažu clone");
+      clearInterval(fallingInterval);
+      clone.remove();
+      
+      if (type !== "dropBug")
+      // funkce pro ukončení hry
+      defeat();
+
+    } // podmínka klonu, když se střetne s hráčem
+    else if (kolize){
+      if (type == "dropBug") {defeat();
+        clearInterval(fallingInterval);
+      clone.remove();
+      } else {console.log("Přičítám skore");
+      clearInterval(fallingInterval);
+      clone.remove();
+      score++;
+      scoreSpan.innerText = score;}
+      
+
+    } 
+  }
+
+  const fallingInterval = setInterval(pohybdolu, 30);
+}
+//když člověk prohraje 
+function defeat(){
+  if (life == 3) {
+    life--;
+    srdce3.style.display="none";
+  } else if(life == 2) {
+    life--;
+    srdce2.style.display="none";
+  } else if(life == 1) {
+    life--;
+    srdce1.style.display = "none";
+    clearInterval(interval);
+  // připravit tlačítko pro restart
+  console.log("Konec hry");
+  defeatDiv.style.display = "block";
+    document.querySelectorAll(".dropItem").forEach(el => el.remove());
+  const scoreVypis = document.getElementById("scoreOdstavec");
+  scoreVypis.innerHTML = `Tvé skóre bylo: <strong>${score}</strong>`;
   }
   
-  const fallingInterval = setInterval(pohybdolu, 30);
+  
   
 
 }
@@ -146,3 +231,5 @@ endButton.addEventListener("click", konec);
 finalButton.addEventListener("click", konec);
 // Ovládání hráče
 document.addEventListener("keydown", movement);
+// Button pro restart
+restart.addEventListener("click", startHry);
