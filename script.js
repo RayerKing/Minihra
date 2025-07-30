@@ -212,6 +212,7 @@ function spawn() {
           life++;
           srdce3.style.display = "flex";
         } else if (life == 1){
+          life++;
           srdce2.style.display = "flex";
         }
       }else {
