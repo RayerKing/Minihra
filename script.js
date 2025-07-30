@@ -10,6 +10,12 @@ const endButton = document.getElementById("endButton");
 const navbar = document.getElementById("navbar");
 // sekce hry
 const game = document.getElementById("game");
+// div pro komentář
+const komentar = document.querySelector(".komentar");
+//  komentář ke hře, co se stalo
+const komentarText = document.getElementById("komentarText");
+// mraky
+const mraky = document.querySelector(".mraky");
 // tlačítko pro konec hry
 const finalButton = document.getElementById("finalButton");
 // button po prohře
@@ -33,7 +39,15 @@ const srdce1 = document.getElementById("srdce1");
 const srdce2 = document.getElementById("srdce2");
 const srdce3 = document.getElementById("srdce3");
 //drop věcí v poli
-const pole = ["dropHtml", "dropCss", "dropJs", "dropBug", "dropHeart"];
+const pole = [
+  "dropHtml",
+  "dropCss",
+  "dropJs",
+  "dropBug",
+  "dropHeart",
+  "dropRandom",
+];
+//const pole = ["dropRandom"];
 
 // načtení chytaných věcí
 const dropHtml = document.getElementById("dropHtml");
@@ -41,9 +55,16 @@ const dropJs = document.getElementById("dropJs");
 const dropCss = document.getElementById("dropCss");
 const dropBug = document.getElementById("dropBug");
 const dropHeart = document.getElementById("dropHeart");
+const dropRandom = document.getElementById("dropRandom");
 // interval
 let interval;
 let vypocetOkna;
+
+// proměnné, které se budou měnit
+let pohybPlayer;
+let dropSpeed;
+let spawnTime;
+let ovladani;
 
 // funkce pro zobrazení pravidel hry
 function tabulka() {
@@ -54,12 +75,11 @@ function tabulka() {
   magicButton.removeEventListener("click", konec);
   magicButton.removeEventListener("click", tabulka);
   magicButton.addEventListener("click", startHry);
-  console.log("Odebírám tabulku, přidávám startHry");
-  console.log("volám funkci tabulka");
 }
 
 // funkce pro ukončení pravidel hry
 function konec() {
+  komentar.style.display = "none";
   magicButton.style.display = "block";
   textHlavniStranky.style.display = "block";
   magicButton.innerText = "Kouzelné tlačítko";
@@ -68,14 +88,17 @@ function konec() {
   game.style.display = "none";
   magicButton.removeEventListener("click", startHry);
   magicButton.addEventListener("click", tabulka);
-  console.log("Odebírám starthry, přidávám tabulku");
+  //console.log("Odebírám starthry, přidávám tabulku");
   welcome.style.display = "flex";
-  console.log("volám funkci konec");
+  //console.log("volám funkci konec");
   clearInterval(interval);
 }
 
 // funkce pro startHry
 function startHry() {
+  mraky.style.display ="flex";
+  komentar.style.display = "block";
+  komentarText.innerText = "";
   srdce1.style.display = "flex";
   srdce2.style.display = "flex";
   srdce3.style.display = "flex";
@@ -84,10 +107,12 @@ function startHry() {
   score = 0;
   scoreSpan.innerText = score;
 
+  defaultOption();
+
   // pro testování
   //spawn();
 
-  interval = setInterval(spawn, 2000);
+  interval = setInterval(spawn, spawnTime);
 
   magicButton.style.display = "none";
   finalButton.style.display = "block";
@@ -98,46 +123,53 @@ function startHry() {
 
   magicButton.removeEventListener("click", startHry);
   magicButton.addEventListener("click", konec);
-  console.log("Odebírám starthry, přidávám tabulku");
-  console.log("volám funkci startHry");
+  //console.log("Odebírám starthry, přidávám tabulku");
+  //console.log("volám funkci startHry");
   herniOknoSirka();
   playerMovement = vypocetOkna / 2 - 55;
   player.style.left = playerMovement + "px";
-  console.log("Hráčova poloha: " + playerMovement);
+  //console.log("Hráčova poloha: " + playerMovement);
 }
 
 function herniOknoSirka() {
   const gameWindow = document.querySelector(".gameWindow");
   vypocetOkna = gameWindow.offsetWidth;
-  console.log("Okno je široké: " + vypocetOkna);
+  //console.log("Okno je široké: " + vypocetOkna);
 }
 
 //Funkce pro pohyb hráče
 function movement(e) {
-  console.log(playerMovement);
-  if (e.key == "ArrowLeft") {
-    console.log("doleva");
-    playerLeft();
-  }
+  if (ovladani) {
+    if (e.key == "ArrowLeft") {
+      playerLeft();
+    }
 
-  if (e.key == "ArrowRight") {
-    console.log("doprava");
-    playerRight();
+    if (e.key == "ArrowRight") {
+      playerRight();
+    }
+  } else {
+    if (e.key == "ArrowLeft") {
+      playerRight();
+    }
+
+    if (e.key == "ArrowRight") {
+      playerLeft();
+    }
   }
 }
 
 // Funkce pro pohyb doleva
 function playerLeft() {
   if (playerMovement > 0) {
-    playerMovement -= 15;
+    playerMovement -= pohybPlayer;
     player.style.left = playerMovement + "px";
   }
 }
 
 function playerRight() {
   if (playerMovement < vypocetOkna - 100) {
-    console.log("Vypocet okna v playerRight: " + vypocetOkna);
-    playerMovement += 15;
+    // console.log("Vypocet okna v playerRight: " + vypocetOkna);
+    playerMovement += pohybPlayer;
     player.style.left = playerMovement + "px";
   }
 }
@@ -147,14 +179,14 @@ function spawn() {
   // pro určení dropu
   const randomPole = pole[Math.floor(Math.random() * pole.length)];
   const vzor = document.getElementById(randomPole);
-  console.log(vzor);
+  // console.log(vzor);
   // vytvoření clonu
   const clone = vzor.cloneNode(true);
   clone.removeAttribute("id");
   clone.setAttribute("data-type", randomPole);
-  console.log("Typ klonu:", clone.getAttribute("data-type"));
+  // console.log("Typ klonu:", clone.getAttribute("data-type"));
   clone.classList.add("dropItem");
-  console.log("clone je " + randomPole);
+  //  console.log("clone je " + randomPole);
 
   document.querySelector(".gameWindow").appendChild(clone);
   // určení random pozice na ose x
@@ -165,7 +197,7 @@ function spawn() {
   let top = 0;
   // funkce pro pohyb dolu
   function pohybdolu() {
-    top += 5;
+    top += dropPixel;
     clone.style.top = top + "px";
     const type = clone.getAttribute("data-type");
     const hitBoxPlayer = player.getBoundingClientRect();
@@ -179,15 +211,15 @@ function spawn() {
       hitBoxClone.right < hitBoxPlayer.left ||
       hitBoxClone.left > hitBoxPlayer.right
     );
-    console.log(hitBoxClone.top + "clone");
-    console.log(windowBox.bottom + "window");
+    //   console.log(hitBoxClone.top + "clone");
+    //   console.log(windowBox.bottom + "window");
     //podmínka pro odstranění clonu, když vypadne z obrazovky
     if (hitBoxClone.top > windowBox.bottom) {
-      console.log("Mažu clone");
+      //   console.log("Mažu clone");
       clearInterval(fallingInterval);
       clone.remove();
 
-      if (type !== "dropBug" && type !== "dropHeart") {
+      if (type !== "dropBug" && type !== "dropHeart" && type !== "dropRandom") {
         // funkce pro ukončení hry
         defeat();
       }
@@ -197,26 +229,39 @@ function spawn() {
         defeat();
         clearInterval(fallingInterval);
         clone.remove();
-      } 
+      }
       //podmínka, co se stane, když chytne srdce
-      else if(type == "dropHeart"){
+      else if (type == "dropHeart") {
         clearInterval(fallingInterval);
-  clone.remove();
+        clone.remove();
 
-
-        if (life == 3){
-
+        if (life == 3) {
           score++;
           scoreSpan.innerText = score;
-        } else if(life == 2){
+        } else if (life == 2) {
           life++;
           srdce3.style.display = "flex";
-        } else if (life == 1){
-          life++;
+        } else if (life == 1) {
           srdce2.style.display = "flex";
+          life++;
         }
-      }else {
-        console.log("Přičítám skore");
+      } else if (type == "dropRandom") {
+        clearInterval(fallingInterval);
+        clone.remove();
+        const upgradePole = [
+          betraylKey,
+          fasterPlayer,
+          fasterDrop,
+          fasterSpawn,
+          slowerPlayer,
+
+          slowerDrop
+        ];
+        const randomUpgrade =
+          upgradePole[Math.floor(Math.random() * upgradePole.length)];
+
+        randomUpgrade();
+      } else {
         clearInterval(fallingInterval);
         clone.remove();
         score++;
@@ -225,7 +270,7 @@ function spawn() {
     }
   }
 
-  const fallingInterval = setInterval(pohybdolu, 30);
+  const fallingInterval = setInterval(pohybdolu, dropSpeed);
 }
 //když člověk prohraje
 function defeat() {
@@ -239,8 +284,7 @@ function defeat() {
     life--;
     srdce1.style.display = "none";
     clearInterval(interval);
-    // připravit tlačítko pro restart : splněno
-    console.log("Konec hry");
+    
     defeatDiv.style.display = "block";
     document.querySelectorAll(".dropItem").forEach((el) => el.remove());
     const scoreVypis = document.getElementById("scoreOdstavec");
@@ -248,6 +292,150 @@ function defeat() {
   }
 }
 
+// default hodnoty
+function defaultOption() {
+  pohybPlayer = 15;
+  spawnTime = 2600;
+  dropSpeed = 34;
+  dropPixel = 5;
+  ovladani = true;
+  console.log("Dávám základní hodnoty pro hru");
+  console.log("Pohyb hráče: " + pohybPlayer);
+  console.log("Spawn Time: " + spawnTime);
+  console.log("DropSpeed: " + dropSpeed);
+}
+//definování random funkcí
+// zvýšení rychlosti hráče
+function fasterPlayer() {
+  if (pohybPlayer > 35) {
+    bonusScore();
+  } else {
+    pohybPlayer += 5;
+    const hlaska = [
+      "Někdo měl kafe navíc!",
+      "Flash by záviděl.",
+      "Zpomalení je pro slabochy.",
+      "Překročil jsi rychlostní limit!",
+      "Teď jsi nepolapitelný!"
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    if (vybranaHlaska === "Překročil jsi rychlostní limit!") {
+  score--;
+  scoreSpan.innerText = score;
+}
+
+    komentarText.innerText = vybranaHlaska;
+  }
+}
+// rychlejší padání dropu
+function fasterDrop() {
+  if (dropSpeed < 26) {
+    bonusScore();
+  } else {
+    dropSpeed -= 3;
+    const hlaska = [
+      "Není čas vysvětlovat - chytej!",
+      "Aspoň to nebude nuda... chvíli.",
+      "Tohle je speedrun... tak makej",
+      "Padá to. Vážně. Rychle.",
+      "Gravitace má svůj den!",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  }
+}
+// rychlejší spawnování
+function fasterSpawn() {
+  if (spawnTime < 1500) {
+    bonusScore();
+  } else {
+    spawnTime -= 500;
+    const hlaska = [
+      "Spawnfest začíná!",
+      "Další? A další?!",
+      "Mozek: přetížen. Palce: spocené.",
+      "Doufám, že sis nechtěl odpočinout.",
+      "Zatím žiješ? Well Done",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  }
+}
+// zpomalení hráče
+function slowerPlayer() {
+  if (pohybPlayer < 15) {
+    bonusScore();
+  } else {
+    pohybPlayer -= 5;
+    const hlaska = [
+      "A najednou je z tebe důchodce.",
+      "Ztratil jsi chuť do života?",
+      "Tvůj stín tě předběhl.",
+      "Možná bys měl požádat šneka o pomoc.",
+      "Želva pozdravuje z cíle!",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  }
+}
+// přidání dvojnásobku bodů
+function bonusScore() {
+  console.log("Přidání bonusu");
+  score += 10;
+  scoreSpan.innerText = score;
+  const hlaska = [
+      "Jackpot! Desítka k dobru!",
+      "Přesně do černého!",
+      "Kdo neriskuje, nevyhraje!",
+      "Série pokračuje! Body zdarma!",
+      "Dáreček za snahu!",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+}
+// pomalejší drop
+function slowerDrop() {
+  if (dropSpeed > 34) {
+    bonusScore();
+  } else {
+    dropSpeed += 5;
+    const hlaska = [
+      "Teď to zvládne i babička!",
+      "Režim pro batolata aktivován.",
+      "Pomaleji už to nepůjde.",
+      "Teď už to nejde nestihnout.",
+      "Snad to spadne dřív než GTA 6",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  }
+}
+// změna kláves TODO
+function betraylKey() {
+  if (ovladani) {
+    ovladani = false;
+    const hlaska = [
+      "Ovládání přešlo na temnou stranu!",
+      "Vlevo, vpravo? Zkus hádat.",
+      "Hraní je přeci zábava.",
+      "Autor: Hlava mi taky bouchla.",
+      "Troll aktivován. Have fun!",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  } else {
+    ovladani = true;
+    const hlaska = [
+      "A je to zpět! Už zase víš, co děláš.",
+      "Klid a mír... aspoň na chvíli.",
+      "Už to není obrácený. Nebo jo? Ne... jo? Ne.",
+      "Konečně to zase poslouchá!",
+      "Pozor! Překvapení!",
+    ];
+    const vybranaHlaska = hlaska[Math.floor(Math.random() * hlaska.length)];
+    komentarText.innerText = vybranaHlaska;
+  }
+}
 // Po kliknutí na Kouzelné tlačítko
 magicButton.addEventListener("click", tabulka);
 // Po kliknutí na křížek

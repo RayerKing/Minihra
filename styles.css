@@ -150,7 +150,7 @@ body {
 .life {
   min-width: 200px;
   flex: 1 1 250px;
-  padding: 1rem; 
+  padding: 1rem;
   border-radius: 10px;
   text-align: center;
 }
@@ -263,7 +263,7 @@ body {
 /* Herní okno */
 .gameWindow {
   position: relative;
-  background-color: #ffffff;
+  background: linear-gradient(to bottom, #0077aa, #66c6f2, #e0f7ff);
   border: 6px solid #0077aa;
   border-radius: 20px;
   width: 90%;
@@ -335,7 +335,6 @@ body {
   bottom: 4.2rem;
   left: 100px;
 
-  
   height: 30px;
 }
 
@@ -348,18 +347,63 @@ body {
   top: 0;
   width: 50px;
   height: auto;
-  pointer-events: none; 
+  pointer-events: none;
   z-index: 10;
   transition: top 0.1s linear;
 }
 
-.gameHtml, .gameCss, .gameJs, .gameBug, .gameHeart {
-  display:none;
+.gameHtml,
+.gameCss,
+.gameJs,
+.gameBug,
+.gameHeart,
+.gameRandom,
+.mraky {
+  display: none;
 }
+
+#mrak1, #mrak2, #mrak3, #mrak4 {
+  position: absolute;
+  max-height: 50%;
+  
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 5;
+}
+
+#mrak1 {
+  top: 20%;
+  left: 10%;
+  width: 300px;
+  height: 200px;
+}
+
+#mrak2 {
+  top: 0%;
+  right: 10%;
+  width: 300px;
+  height: 200px;
+}
+
+#mrak3 {
+  top: 40%;
+  right: 30%;
+  width: 100px;
+  height: 100px;
+}
+
+#mrak4 {
+  top: 10%;
+  left: 40%;
+  width: 100px;
+  height: 100px;
+}
+
+
 
 /* KonecHry div */
 .defeatGame {
-  display: none; 
+  display: none;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -377,6 +421,27 @@ body {
   color: #c0392b;
   font-size: 2.5rem;
   margin-bottom: 1.5rem;
+}
+
+/* Komentář ke hře */
+.komentar {
+  display: none;
+  position: absolute;
+  top: 20px;
+  left: 10%;
+
+  width: 500px;
+  height: 40px;
+  line-height: 25px;
+  text-align: center;
+
+  background: rgba(0, 0, 0, 0.2);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  font-family: monospace;
+  z-index: 100;
 }
 
 /* Restart button */
@@ -401,14 +466,10 @@ body {
 
 #scoreOdstavec {
   color: black;
-  margin-bottom: 1rem; 
+  margin-bottom: 1rem;
   font-size: 1.2rem;
   text-align: center;
 }
-
-
-
-
 
 @media (max-width: 1024px), (pointer: coarse) {
   #vysvetleni {
