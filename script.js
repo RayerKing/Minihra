@@ -33,16 +33,17 @@ const srdce1 = document.getElementById("srdce1");
 const srdce2 = document.getElementById("srdce2");
 const srdce3 = document.getElementById("srdce3");
 //drop věcí v poli
-const pole = ["dropHtml", "dropCss", "dropJs", "dropBug"];
-
+const pole = ["dropHtml", "dropCss", "dropJs", "dropBug", "dropHeart"];
 
 // načtení chytaných věcí
 const dropHtml = document.getElementById("dropHtml");
 const dropJs = document.getElementById("dropJs");
 const dropCss = document.getElementById("dropCss");
 const dropBug = document.getElementById("dropBug");
+const dropHeart = document.getElementById("dropHeart");
 // interval
 let interval;
+let vypocetOkna;
 
 // funkce pro zobrazení pravidel hry
 function tabulka() {
@@ -79,16 +80,13 @@ function startHry() {
   srdce2.style.display = "flex";
   srdce3.style.display = "flex";
   life = 3;
-  defeatDiv.style.display="none";
+  defeatDiv.style.display = "none";
   score = 0;
   scoreSpan.innerText = score;
-  // TODO vymyslet získání středu... a upravit okraje
-  player.style.left = "300px";
-  playerMovement = parseInt(
-    window.getComputedStyle(player).getPropertyValue("left")
-  );
+
   // pro testování
   //spawn();
+
   interval = setInterval(spawn, 2000);
 
   magicButton.style.display = "none";
@@ -102,6 +100,16 @@ function startHry() {
   magicButton.addEventListener("click", konec);
   console.log("Odebírám starthry, přidávám tabulku");
   console.log("volám funkci startHry");
+  herniOknoSirka();
+  playerMovement = vypocetOkna / 2 - 55;
+  player.style.left = playerMovement + "px";
+  console.log("Hráčova poloha: " + playerMovement);
+}
+
+function herniOknoSirka() {
+  const gameWindow = document.querySelector(".gameWindow");
+  vypocetOkna = gameWindow.offsetWidth;
+  console.log("Okno je široké: " + vypocetOkna);
 }
 
 //Funkce pro pohyb hráče
@@ -120,18 +128,22 @@ function movement(e) {
 
 // Funkce pro pohyb doleva
 function playerLeft() {
-  playerMovement -= 15;
-  player.style.left = playerMovement + "px";
+  if (playerMovement > 0) {
+    playerMovement -= 15;
+    player.style.left = playerMovement + "px";
+  }
 }
 
 function playerRight() {
-  playerMovement += 15;
-  player.style.left = playerMovement + "px";
+  if (playerMovement < vypocetOkna - 100) {
+    console.log("Vypocet okna v playerRight: " + vypocetOkna);
+    playerMovement += 15;
+    player.style.left = playerMovement + "px";
+  }
 }
 
 // funkce pro spawn
 function spawn() {
-  
   // pro určení dropu
   const randomPole = pole[Math.floor(Math.random() * pole.length)];
   const vzor = document.getElementById(randomPole);
@@ -147,10 +159,8 @@ function spawn() {
   document.querySelector(".gameWindow").appendChild(clone);
   // určení random pozice na ose x
   clone.style.position = "absolute";
-  clone.style.left = Math.floor(Math.random() * 500) + "px";
+  clone.style.left = Math.floor(Math.random() * (vypocetOkna - 100)) + "px";
   clone.style.top = "0px";
-
-  
 
   let top = 0;
   // funkce pro pohyb dolu
@@ -164,11 +174,11 @@ function spawn() {
       .querySelector(".gameWindow")
       .getBoundingClientRect();
     const kolize = !(
-  hitBoxClone.bottom < hitBoxPlayer.top ||
-  hitBoxClone.top > hitBoxPlayer.bottom ||
-  hitBoxClone.right < hitBoxPlayer.left ||
-  hitBoxClone.left > hitBoxPlayer.right
-);
+      hitBoxClone.bottom < hitBoxPlayer.top ||
+      hitBoxClone.top > hitBoxPlayer.bottom ||
+      hitBoxClone.right < hitBoxPlayer.left ||
+      hitBoxClone.left > hitBoxPlayer.right
+    );
     console.log(hitBoxClone.top + "clone");
     console.log(windowBox.bottom + "window");
     //podmínka pro odstranění clonu, když vypadne z obrazovky
@@ -176,51 +186,65 @@ function spawn() {
       console.log("Mažu clone");
       clearInterval(fallingInterval);
       clone.remove();
-      
-      if (type !== "dropBug")
-      // funkce pro ukončení hry
-      defeat();
 
+      if (type !== "dropBug" && type !== "dropHeart") {
+        // funkce pro ukončení hry
+        defeat();
+      }
     } // podmínka klonu, když se střetne s hráčem
-    else if (kolize){
-      if (type == "dropBug") {defeat();
+    else if (kolize) {
+      if (type == "dropBug") {
+        defeat();
         clearInterval(fallingInterval);
-      clone.remove();
-      } else {console.log("Přičítám skore");
-      clearInterval(fallingInterval);
-      clone.remove();
-      score++;
-      scoreSpan.innerText = score;}
-      
+        clone.remove();
+      } 
+      //podmínka, co se stane, když chytne srdce
+      else if(type == "dropHeart"){
+        clearInterval(fallingInterval);
+  clone.remove();
 
-    } 
+
+        if (life == 3){
+
+          score++;
+          scoreSpan.innerText = score;
+        } else if(life == 2){
+          life++;
+          srdce3.style.display = "flex";
+        } else if (life == 1){
+          srdce2.style.display = "flex";
+        }
+      }else {
+        console.log("Přičítám skore");
+        clearInterval(fallingInterval);
+        clone.remove();
+        score++;
+        scoreSpan.innerText = score;
+      }
+    }
   }
 
   const fallingInterval = setInterval(pohybdolu, 30);
 }
-//když člověk prohraje 
-function defeat(){
+//když člověk prohraje
+function defeat() {
   if (life == 3) {
     life--;
-    srdce3.style.display="none";
-  } else if(life == 2) {
+    srdce3.style.display = "none";
+  } else if (life == 2) {
     life--;
-    srdce2.style.display="none";
-  } else if(life == 1) {
+    srdce2.style.display = "none";
+  } else if (life == 1) {
     life--;
     srdce1.style.display = "none";
     clearInterval(interval);
-  // připravit tlačítko pro restart
-  console.log("Konec hry");
-  defeatDiv.style.display = "block";
-    document.querySelectorAll(".dropItem").forEach(el => el.remove());
-  const scoreVypis = document.getElementById("scoreOdstavec");
-  scoreVypis.innerHTML = `Tvé skóre bylo: <strong>${score}</strong>`;
+    // připravit tlačítko pro restart : splněno
+    console.log("Konec hry");
+    defeatDiv.style.display = "block";
+    document.querySelectorAll(".dropItem").forEach((el) => el.remove());
+    const scoreVypis = document.getElementById("scoreOdstavec");
+    scoreVypis.innerHTML = `Tvé skóre bylo: <strong>${score}</strong>`;
   }
-  
-  
-  
-
 }
 
 // Po kliknutí na Kouzelné tlačítko
